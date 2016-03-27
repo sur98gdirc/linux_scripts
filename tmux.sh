@@ -1,3 +1,5 @@
+# this file should be sourced from bashrc
+
 function tm_my
 {
     if [ -z "$TMUX" ] && [ "$TERM" != 'screen' ] ;  then
@@ -20,7 +22,7 @@ function tm_prompt
     if [ "$PR_HOSTNAME" = "$TMUX_HOSTNAME" ] ; then
         PR_HOSTNAME=
     fi
-    printf "\033k%s@%s:%s\033\\" "${PR_USER}" "${PR_HOSTNAME}" "${PWD/#$HOME/~}"
+    printf "\033k%s@%s:%s\033\\" "${PR_USER}" "${PR_HOSTNAME}" "$1"
     #tmux set -q automatic-rename off
 }
 
@@ -31,9 +33,9 @@ if [ "$PS1" ]; then
 
     case $TERM in
     screen*)
-      PROMPT_COMMAND=tm_prompt
-      alias mc='printf "\033k%s\033\\" "mc" ; mc'
-      alias man='printf "\033k%s\033\\" "man" ; man'
+      PROMPT_COMMAND='tm_prompt "${PWD/#$HOME/~}"'
+      alias mc='tm_prompt "mc" ; mc'
+      alias man='tm_prompt "man" ; man'
       ;;
     *)
       ;;
