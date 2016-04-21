@@ -39,8 +39,9 @@ function tm_my
         export TMUX_USER=$USER
         export TMUX_HOSTNAME=${HOSTNAME%%.*}
         printf "\033]0;%s@%s:%s\007" "${TMUX_USER}" "${TMUX_HOSTNAME}" "tmux"
-        #tmux set -q automatic-rename off
-        if tmux has ; then tmux attach ; else tmux new ; fi
+        tmux has || tmux new -d
+        tmux set-window -g automatic-rename off
+        tmux attach
     else
         echo >&2 "already in tmux"
     fi
@@ -59,7 +60,9 @@ function tm_prompt
     else
         PR_USERHOST="$PR_USER@$PR_HOSTNAME:"
     fi
-    printf "\033k%s%s\033\\" "${PR_USERHOST}" "$1"
+    WINNAME="$1"
+    [[ -x $HOME/.tmux-winname-mangle ]] && WINNAME=`$HOME/.tmux-winname-mangle "$WINNAME"`
+    printf "\033k%s%s\033\\" "${PR_USERHOST}" "$WINNAME"
 }
 
 function tm_prompt_pwd
@@ -69,6 +72,13 @@ function tm_prompt_pwd
 
 
 if [ "$PS1" ]; then # check for interactive mode
+    if [ -x /usr/bin/id ]; then
+        USER="`id -un`"
+        LOGNAME=$USER
+        MAIL="/var/spool/mail/$USER"
+        export USER LOGNAME MAIL
+    fi
+
     #PS1='[\u@\h \w]\$ '
 
     alias tm='tm_my'
