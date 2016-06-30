@@ -65,9 +65,16 @@ function tm_prompt
     printf "\033k%s%s\033\\" "${PR_USERHOST}" "$WINNAME"
 }
 
+function get_abbrev_pwd
+{
+    RES=$PWD
+    [[ "$RES" =~ ^"$HOME"(/|$) ]] && RES="~${RES#$HOME}"
+    echo -n "$RES"
+}
+
 function tm_prompt_pwd
 {
-    tm_prompt "${PWD/#$HOME/~}"
+    tm_prompt "`get_abbrev_pwd`"
 }
 
 
@@ -89,7 +96,7 @@ if [ "$PS1" ]; then # check for interactive mode
             preexec_functions+=(tm_prompt)
              precmd_functions+=(tm_prompt_pwd)
         else
-            PROMPT_COMMAND='tm_prompt "${PWD/#$HOME/~}"'
+            PROMPT_COMMAND='tm_prompt "`get_abbrev_pwd`"'
 
             alias mc='tm_prompt "mc" ; mc'
             alias man='tm_prompt "man" ; man'
