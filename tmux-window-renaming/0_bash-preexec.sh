@@ -34,6 +34,11 @@
 #  using: the "DEBUG" trap, and the "PROMPT_COMMAND" variable. prexec_and_precmd_install
 #  will override these and if you override one or the other this will most likely break.
 
+# Avoid running under Midnight Commander
+if [[ -n "$MC_SID" ]] ; then
+    return 0
+fi
+
 # Avoid duplicate inclusion
 if [[ "$__bp_imported" == "defined" ]]; then
     return 0
