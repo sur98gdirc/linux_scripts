@@ -33,6 +33,13 @@
 #   is also displayed in the name of tmux window
 #
 
+# Avoid duplicate inclusion
+if [[ "$__tmwr_imported" == "defined" ]]; then
+    return 0
+fi
+__tmwr_imported="defined"
+
+
 function tm_my
 {
     if [ -z "$TMUX" ] && [ "$TERM" != 'screen' ] ;  then
